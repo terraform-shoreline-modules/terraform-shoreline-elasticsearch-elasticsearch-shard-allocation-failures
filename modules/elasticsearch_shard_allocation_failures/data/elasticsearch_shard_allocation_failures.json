@@ -1,0 +1,146 @@
+{
+  "name": "elasticsearch_shard_allocation_failures",
+  "description": "Elasticsearch shard allocation failures occur when Elasticsearch nodes are unable to allocate shards to the appropriate nodes in a cluster. This can happen when there are too many shards to allocate or when nodes are not properly configured. When shard allocation fails, it can lead to data loss, search performance issues, and other problems. It is important to monitor Elasticsearch clusters and address any shard allocation failures as soon as possible to maintain the integrity and performance of the cluster.",
+  "params": [
+    {
+      "name": "CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "ELASTICSEARCH_ENDPOINT",
+      "value": ""
+    },
+    {
+      "name": "ELASTICSEARCH_DATA_PATH",
+      "value": ""
+    },
+    {
+      "name": "ELASTICSEARCH_CONFIG_PATH",
+      "value": ""
+    },
+    {
+      "name": "INDEX_NAME",
+      "value": ""
+    },
+    {
+      "name": "ELASTICSEARCH_LOG_PATH",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    },
+    {
+      "name": "K8S_CLUSTER_NAME",
+      "value": ""
+    },
+    {
+      "name": "NAMESPACE",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Elasticsearch Shard Allocation Failures\nElasticsearch shard allocation failures occur when Elasticsearch nodes are unable to allocate shards to the appropriate nodes in a cluster. This can happen when there are too many shards to allocate or when nodes are not properly configured. When shard allocation fails, it can lead to data loss, search performance issues, and other problems. It is important to monitor Elasticsearch clusters and address any shard allocation failures as soon as possible to maintain the integrity and performance of the cluster."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Elasticsearch cluster health"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `curl -X GET ${ELASTICSEARCH_ENDPOINT}/_cluster/health`"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Elasticsearch node status"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `curl -X GET ${ELASTICSEARCH_ENDPOINT}/_cat/nodes`"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Elasticsearch shard allocation"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `curl -X GET ${ELASTICSEARCH_ENDPOINT}/_cat/allocation`"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Elasticsearch shard status"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `curl -X GET ${ELASTICSEARCH_ENDPOINT}/_cat/shards`"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Elasticsearch logs for errors and warnings"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `sudo grep -iE 'error|warn' ${ELASTICSEARCH_LOG_PATH}`"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Elasticsearch disk usage"
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `df -h | grep ${ELASTICSEARCH_DATA_PATH}`"
+    },
+    {
+      "name": "cell_14",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Elasticsearch configuration"
+    },
+    {
+      "name": "cell_15",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "(host | host_name=$HOST_NAME) union (pod | k8s_cluster_name=$K8S_CLUSTER_NAME | namespace=$NAMESPACE) | `cat ${ELASTICSEARCH_CONFIG_PATH}/elasticsearch.yml`"
+    },
+    {
+      "name": "cell_16",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Review the shard allocation settings and tune them appropriately."
+    },
+    {
+      "name": "cell_17",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_elastic_config_update($CLUSTER_NAME, $INDEX_NAME)"
+    }
+  ]
+}
